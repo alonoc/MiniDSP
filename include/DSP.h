@@ -19,8 +19,8 @@ SC_MODULE(DSP)
 	sc_in_clk clock;
 	sc_in<double> outRealBus;
 	sc_in<double> outImaginaryBus;
-	sc_in<bool> readingSamplesFlag;
-	sc_in<bool> calculatingFlag;
+	sc_out<bool> readingSamplesFlag;
+	sc_out<bool> calculatingFlag;
 	sc_out<double> InRealBus;
 	sc_out<double> inImaginaryBus;
 	sc_out<bool> flag_en_IFFT;
@@ -30,8 +30,8 @@ SC_MODULE(DSP)
 	
 
 	//Status;
-	bool sendingDataFlag = 0;
-	bool recivingDataFlag = 0;
+	int initSendingData = 0;
+	bool initRecivingData = 0;
 	bool startExecution = 0;
 	bool hasFinished = 1;
 	//Current instruction
@@ -49,9 +49,7 @@ SC_MODULE(DSP)
 
 	//State Machine variables
 	sc_uint<4> lastOpCode = 0;
-	bool currentCalculatingModule;
-	bool currentReadingSamples;
-
+	
 	//DSP Blocks
 	void decode(void );
 	void sendingData(void);
@@ -77,6 +75,7 @@ SC_MODULE(DSP)
 
 		SC_METHOD(enableStateMachine);
 			sensitive << clock.pos();
+
 	}
 
 

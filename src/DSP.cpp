@@ -29,8 +29,32 @@ void DSP::decode(void){
 	}
 }
 
+void DSP::auxDecodeNType(void){
+	sc_uint<64> inst = instruction.read();
+	NForFourier = inst & NMask;
+	hasFinished = 0;
+	currentDataIndex = 0;
+	initSendingData = 1;
+	if(opCode == fftOpCode){
+		cout<< "Soy fft y el N es "<<(inst & NMask)<<"\n";
+	}
+	else if(opCode == ifftOpCode){
+		cout<< "Soy ifft y el N es "<<(inst & NMask)<<"\n";
+	}
+}
+
 void DSP::sendingData(void){
-	if(sendingDataFlag == 1 && currentReadingSamples == 1)
+	if(initSendingData == 1){
+		initSendingData = 2;
+	}
+	else if(initSendingData == 2){
+		initSendingData = 3;
+	}
+	else if(initSendingData == 3){
+		initSendingData = 0;
+		readingSamplesFlag = 1;
+	}
+	else if(readingSamplesFlag == 1 )
 	{
 		if(opCode == fftOpCode){
 			auxSendingData();
@@ -41,23 +65,40 @@ void DSP::sendingData(void){
 		else if(opCode == ALUOpCode){
 
 		}
+
+		
+	}
+	
+}
+
+void DSP::auxSendingData(void){
+	if(NForFourier > currentDataIndex && currentDataIndex < MemorySize)
+	{
+		cout<<"Mandando datos \n";
+		InRealBus = memory[currentDataIndex];
+		inImaginaryBus = 0;
+		currentDataIndex =currentDataIndex+1;
+	}
+	else
+	{
+		readingSamplesFlag = 0;
+		initRecivingData = 1;
+		currentDataIndex = 0;
 	}
 }
 
 void DSP::enableStateMachine(void){
 	if(opCode == lastOpCode){
 		flag_en_IFFT = 0;
-		currentCalculatingModule = calculatingFlag.read();
-		currentReadingSamples = readingSamplesFlag.read();
 	}
 	else{
 		if(opCode == fftOpCode){
 			
 		}
 		else if(opCode == ifftOpCode){
+			cout<<"Sending Enable\n";
 			flag_en_IFFT = 1;
-			currentCalculatingModule = calculatingFlag.read();
-			currentReadingSamples = readingSamplesFlag.read();
+			lastOpCode = opCode;
 		}
 		else if(opCode == ALUOpCode){
 
@@ -66,7 +107,7 @@ void DSP::enableStateMachine(void){
 }
 
 void DSP::recivingData(void){
-	if(recivingDataFlag == 1 && currentCalculatingModule == 1){
+	if(calculatingFlag == 1 || initRecivingData == 1){
 		if(opCode == fftOpCode){
 			auxRecivingData();
 		}
@@ -75,6 +116,11 @@ void DSP::recivingData(void){
 		}
 		else if(opCode == ALUOpCode){
 
+		}
+
+		if(initRecivingData == 1){
+			initRecivingData = 0;
+			calculatingFlag = 1;
 		}
 	}
 }
@@ -88,39 +134,11 @@ void DSP::auxRecivingData(void){
 	}
 	else
 	{
-		sendingDataFlag = 0;
-		recivingDataFlag = 0;
+		calculatingFlag = 0;
 		currentDataIndex = 0;
 		hasFinished = 1;
 	}
 }
 
-void DSP::auxSendingData(void){
-	if(NForFourier > currentDataIndex && currentDataIndex < MemorySize)
-	{
-		cout<<"Mandando datos \n";
-		InRealBus = memory[currentDataIndex];
-		inImaginaryBus = 0;
-		currentDataIndex =currentDataIndex+1;
-	}
-	else
-	{
-		sendingDataFlag = 0;
-		recivingDataFlag = 1;
-		currentDataIndex = 0;
-	}
-}
 
-void DSP::auxDecodeNType(void){
-	sc_uint<64> inst = instruction.read();
-	NForFourier = inst & NMask;
-	hasFinished = 0;
-	currentDataIndex = 0;
-	sendingDataFlag = 1;
-	if(opCode == fftOpCode){
-		cout<< "Soy fft y el N es "<<(inst & NMask)<<"\n";
-	}
-	else if(opCode == ifftOpCode){
-		cout<< "Soy ifft y el N es "<<(inst & NMask)<<"\n";
-	}
-}
+

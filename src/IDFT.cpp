@@ -10,11 +10,8 @@ void IDFT::doIt( void )
 		std::cout << "Reseting...." << std::endl << std::endl;
 		_N = 0;
 		gnral_counter = 0;
-		readingSamples = 0;
-		calculating = 0;
-
 	}
-	else if(readingSamples == 1)
+	else if(readingSamplesFlag.read() == 1)
 	{
 		std::cout << "ReadingSamples...." << std::endl;
 		Samples[gnral_counter] = InReal;
@@ -24,13 +21,11 @@ void IDFT::doIt( void )
 
 		if(gnral_counter == _N)
 		{
-			readingSamples = 0;
-			calculating = 1;
 			gnral_counter = 0;
 			std::cout << std::endl;
 		}
 	}
-	else if(calculating == 1)
+	else if(calculatingFlag.read() == 1)
 	{
 		std::cout << "Calcuting IRDFT...." << std::endl;
 
@@ -58,22 +53,15 @@ void IDFT::doIt( void )
 		std::cout << "Result Calculated: " << gnral_counter << std::endl;
 		if(gnral_counter == _N)
 		{
-			readingSamples = 0;
-			calculating = 0;
 			gnral_counter = 0;
 		}
 		
 	}
-	else if(f_Enable == 1){
+	else if(f_Enable.read() == 1){
 		std::cout << "Enabling...." << std::endl << std::endl;
 		Samples = (double*) calloc(N*2, sizeof(double));
 		_N = N;
 		gnral_counter = 0;
-		readingSamples = 1;
-		calculating = 0;
 	}	
-
-	readingSamplesFlag = readingSamples;
-	calculatingFlag = calculating;
 }
 
