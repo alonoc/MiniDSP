@@ -52,9 +52,9 @@ void DSP::sendingData(void){
 	}
 	else if(initSendingData == 3){
 		initSendingData = 0;
-		readingSamplesFlag = 1;
+		rxSamplesFlag = 1;
 	}
-	else if(readingSamplesFlag == 1 )
+	else if(rxSamplesFlag == 1 )
 	{
 		if(opCode == fftOpCode){
 			auxSendingData();
@@ -81,7 +81,7 @@ void DSP::auxSendingData(void){
 	}
 	else
 	{
-		readingSamplesFlag = 0;
+		rxSamplesFlag = 0;
 		initRecivingData = 1;
 		currentDataIndex = 0;
 	}

@@ -19,7 +19,7 @@ SC_MODULE(DSP)
 	sc_in_clk clock;
 	sc_in<double> outRealBus;
 	sc_in<double> outImaginaryBus;
-	sc_out<bool> readingSamplesFlag;
+	sc_out<bool> rxSamplesFlag;
 	sc_out<bool> calculatingFlag;
 	sc_out<double> InRealBus;
 	sc_out<double> inImaginaryBus;

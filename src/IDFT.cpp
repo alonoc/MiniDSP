@@ -11,7 +11,7 @@ void IDFT::doIt( void )
 		_N = 0;
 		gnral_counter = 0;
 	}
-	else if(readingSamplesFlag.read() == 1)
+	else if(rxSamplesFlag.read() == 1)
 	{
 		std::cout << "ReadingSamples...." << std::endl;
 		Samples[gnral_counter] = InReal;

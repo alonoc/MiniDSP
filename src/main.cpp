@@ -18,7 +18,7 @@ int sc_main(int argc, char* argv[])
 	sc_signal<bool> flag_en_FFT;
 	sc_signal<bool> flag_reset_FFT;
 	sc_signal<int> FFT_N;
-	sc_signal<bool> sendingDataIFFT;
+	sc_signal<bool> rxIFFT;
 	sc_signal<bool> calculatingFlagIFFT;
 	sc_signal<double> InRealBus;
 	sc_signal<double> inImaginaryBus;
@@ -35,7 +35,7 @@ int sc_main(int argc, char* argv[])
 	dsp.inImaginaryBus(inImaginaryBus);
 	dsp.outImaginaryBus(outImaginaryBus);
 	dsp.outRealBus(outRealBus);
-	dsp.readingSamplesFlag(sendingDataIFFT);
+	dsp.rxSamplesFlag(rxIFFT);
 	dsp.calculatingFlag(calculatingFlagIFFT);
 	dsp.fillMemory();
 
@@ -48,13 +48,13 @@ int sc_main(int argc, char* argv[])
 	pIDFT.InImaginary(inImaginaryBus);
 	pIDFT.OutReal(outRealBus);
 	pIDFT.OutImaginary(outImaginaryBus);
-	pIDFT.readingSamplesFlag(sendingDataIFFT);
+	pIDFT.rxSamplesFlag(rxIFFT);
 	pIDFT.calculatingFlag(calculatingFlagIFFT);
 
 
 	// Initialice before tracing
 	clk = 0;
-	sendingDataIFFT = 0;
+	rxIFFT = 0;
 	calculatingFlagIFFT = 0;
 	flag_reset_IFFT = 0;
 
@@ -66,7 +66,7 @@ int sc_main(int argc, char* argv[])
 	sc_trace(wf, flag_en_IFFT, "Flag");
 	sc_trace(wf, InRealBus, "RealData");
 	sc_trace(wf, outRealBus, "OutRealData");
-	sc_trace(wf, sendingDataIFFT, "SendingData");
+	sc_trace(wf, rxIFFT, "SendingData");
 	sc_trace(wf, calculatingFlagIFFT, "CalculatingData");
 
 	sc_start(1, SC_NS);
