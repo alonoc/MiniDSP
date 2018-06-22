@@ -13,6 +13,9 @@ SC_MODULE(IDFT)
 	sc_in< double > InImaginary;
 	sc_out< double > OutReal;
 	sc_out< double > OutImaginary;
+	sc_out<bool> readingSamplesFlag;
+	sc_out<bool> calculatingFlag;
+
 
 	double *Samples;
 	int _N;

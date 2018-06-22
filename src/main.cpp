@@ -1,109 +1,98 @@
 #include <iostream>
 #include <iomanip>
 #include "systemc.h"
-<<<<<<< HEAD
+#include "IDFT.h"
+#include "FPU32.h"
 #include "DSP.h"
 
 int sc_main(int argc, char* argv[])
 {
-	sc_signal<bool>   clock;
+
+	//General Signals
+	sc_signal<bool> clk;
 	sc_signal<sc_uint<64>> inst;
-	sc_signal<bool> hasFinished;
+
+	//FFT and IFFT
+	sc_signal<bool> flag_en_IFFT;
+	sc_signal<bool> flag_reset_IFFT;
+	sc_signal<bool> flag_en_FFT;
+	sc_signal<bool> flag_reset_FFT;
+	sc_signal<int> FFT_N;
+	sc_signal<bool> sendingDataIFFT;
+	sc_signal<bool> calculatingFlagIFFT;
 	sc_signal<double> InRealBus;
 	sc_signal<double> inImaginaryBus;
+	sc_signal<double> outRealBus;
+	sc_signal<double> outImaginaryBus;
 
 	DSP dsp("DSP");
-	dsp.clock(clock);
+	dsp.flag_en_IFFT(flag_en_IFFT);
+	dsp.flag_reset_IFFT(flag_reset_IFFT);
+	dsp.NForFourier(FFT_N);
+	dsp.clock(clk);
 	dsp.instruction(inst);
 	dsp.InRealBus(InRealBus);
 	dsp.inImaginaryBus(inImaginaryBus);
+	dsp.outImaginaryBus(outImaginaryBus);
+	dsp.outRealBus(outRealBus);
+	dsp.readingSamplesFlag(sendingDataIFFT);
+	dsp.calculatingFlag(calculatingFlagIFFT);
 	dsp.fillMemory();
 
-	hasFinished = 0;
-	clock = 0;
-	inst = 0x100000000000000F;
-	hasFinished = 1;
-	for (int i=0;i<10;i++) {
-	    clock = 0; 
-	    sc_start(1,SC_NS);
-	    clock = 1; 
-	    sc_start(1,SC_NS);
-    }
-=======
-#include "IDFT.h"
-#include "FPU32.h"
-
-int sc_main(int argc, char* argv[])
-{
-
-	// Create Module instance
-	sc_signal<bool> clk;
-	sc_signal<bool> flag_en;
-	sc_signal<bool> flag_reset;
-	sc_signal<int> N;
-	sc_signal< double > InReal;
-	sc_signal< double > InImaginary;
-	sc_signal< double > OutReal;
-	sc_signal< double > OutImaginary;
-
-	IDFT pIDFT("idft");
+	IDFT pIDFT("IDFFT");
 	pIDFT.clock(clk);
-	pIDFT.f_Enable(flag_en);
-	pIDFT.reset(flag_reset);
-	pIDFT.N(N);
-	pIDFT.InReal(InReal);
-	pIDFT.InImaginary(InImaginary);
-	pIDFT.OutReal(OutReal);
-	pIDFT.OutImaginary(OutImaginary);
-	
-	// Define the inputs (get from the samples 1,3,8,7,5,6,1,4)
-	double samp_real[] = {35,-8.2426,-3,0.2426,-5,0.2426,-3,-8.2426};
-	double samp_im[] = {0,-7,2,7,0,-7,-2,7};
-	N = 8;
+	pIDFT.f_Enable(flag_en_IFFT);
+	pIDFT.reset(flag_reset_IFFT);
+	pIDFT.N(FFT_N);
+	pIDFT.InReal(InRealBus);
+	pIDFT.InImaginary(inImaginaryBus);
+	pIDFT.OutReal(outImaginaryBus);
+	pIDFT.OutImaginary(outRealBus);
+	pIDFT.readingSamplesFlag(sendingDataIFFT);
+	pIDFT.calculatingFlag(calculatingFlagIFFT);
+
 
 	// Initialice before tracing
 	clk = 0;
-	flag_reset = 0;
 
 	// Starting trace
 	sc_trace_file *wf = sc_create_vcd_trace_file("IDFTing");
 	wf->set_time_unit(1, SC_NS);
 
 	sc_trace(wf, clk, "Clock");
-	sc_trace(wf, flag_en, "Flag");
+	sc_trace(wf, flag_en_IFFT, "Flag");
 	sc_start(1, SC_NS);
-	
-	// Enabling the Module
-	clk = 0;
-	sc_start(1, SC_NS);
-	flag_en = 1;
-	clk = 1;
-	sc_start(1, SC_NS);
-	flag_en = 0;
 
-	// Passing the input
-	for(int i = 0; i < N; i++){
-		InReal = samp_real[i];
-		InImaginary = samp_im[i];
-		clk = 0;
-		sc_start(1, SC_NS);
-		clk = 1;
-		sc_start(1, SC_NS);
-	}
+	inst = 0x2000000000000005;
 	
-	// Reading the output
-	for(int i = 0; i < N; i++){
-		clk = 0;
-		sc_start(1, SC_NS);
-		clk = 1;
-		sc_start(1, SC_NS);
-		std::cout << "Result: "  << OutReal << " + " << OutImaginary << "j" << std::endl;
-	}
-
-	// Finishing trace
-	sc_close_vcd_trace_file(wf);
->>>>>>> f553b740920e44ce97ce0f1960b46b898749cd33
+	for (int i=0;i<15;i++) {
+	    clk = 0; 
+	    sc_start(1,SC_NS);
+	    clk = 1; 
+	    sc_start(1,SC_NS);
+    }
 
 	std::cout << "Hellow World, SystemC" << std::endl;
+	// // Passing the input
+	// for(int i = 0; i < FFT_N; i++){
+	// 	clk = 0;
+	// 	sc_start(1, SC_NS);
+	// 	clk = 1;
+	// 	sc_start(1, SC_NS);
+	// }
+	
+	// // Reading the output
+	// for(int i = 0; i < FFT_N; i++){
+	// 	clk = 0;
+	// 	sc_start(1, SC_NS);
+	// 	clk = 1;
+	// 	sc_start(1, SC_NS);
+	// 	std::cout << "Result: "  << InRealBus << " + " << outImaginaryBus << "j \n";
+	// }
+
+	// // Finishing trace
+	// sc_close_vcd_trace_file(wf);
+
+	// std::cout << "Hellow World, SystemC" << std::endl;
 	return 0;	
 }

@@ -2,8 +2,9 @@
 
 
 void DSP::fillMemory(void){
-	for(int i = 0; i < MemorySize; i++){
-		memory[i] = i;
+	double samp_real[] = {35,-8.2426,-3,0.2426,-5,0.2426,-3,-8.2426};
+	for(int i = 0; i < 8; i++){
+		memory[i] = samp_real[i];
 	}
 }
 
@@ -29,8 +30,7 @@ void DSP::decode(void){
 }
 
 void DSP::sendingData(void){
-	
-	if(sendingDataFlag == 1)
+	if(sendingDataFlag == 1 && currentReadingSamples == 1)
 	{
 		if(opCode == fftOpCode){
 			auxSendingData();
@@ -44,8 +44,29 @@ void DSP::sendingData(void){
 	}
 }
 
+void DSP::enableStateMachine(void){
+	if(opCode == lastOpCode){
+		flag_en_IFFT = 0;
+		currentCalculatingModule = calculatingFlag.read();
+		currentReadingSamples = readingSamplesFlag.read();
+	}
+	else{
+		if(opCode == fftOpCode){
+			
+		}
+		else if(opCode == ifftOpCode){
+			flag_en_IFFT = 1;
+			currentCalculatingModule = calculatingFlag.read();
+			currentReadingSamples = readingSamplesFlag.read();
+		}
+		else if(opCode == ALUOpCode){
+
+		}
+	}
+}
+
 void DSP::recivingData(void){
-	if(recivingDataFlag == 1){
+	if(recivingDataFlag == 1 && currentCalculatingModule == 1){
 		if(opCode == fftOpCode){
 			auxRecivingData();
 		}
@@ -97,9 +118,9 @@ void DSP::auxDecodeNType(void){
 	currentDataIndex = 0;
 	sendingDataFlag = 1;
 	if(opCode == fftOpCode){
-		cout<< "Soy fft y el N es "<<NForFourier<<"\n";
+		cout<< "Soy fft y el N es "<<(inst & NMask)<<"\n";
 	}
 	else if(opCode == ifftOpCode){
-		cout<< "Soy ifft y el N es "<<NForFourier<<"\n";
+		cout<< "Soy ifft y el N es "<<(inst & NMask)<<"\n";
 	}
 }

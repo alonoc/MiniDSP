@@ -7,19 +7,20 @@
 void IDFT::doIt( void )
 {
 	if(reset == 1){
-		//std::cout << "Reseting...." << std::endl << std::endl;
+		std::cout << "Reseting...." << std::endl << std::endl;
 		_N = 0;
 		gnral_counter = 0;
 		readingSamples = 0;
 		calculating = 0;
+
 	}
 	else if(readingSamples == 1)
 	{
-		//std::cout << "ReadingSamples...." << std::endl;
+		std::cout << "ReadingSamples...." << std::endl;
 		Samples[gnral_counter] = InReal;
 		Samples[gnral_counter+_N] = InImaginary;
 		gnral_counter++;
-		//std::cout << "Sample read: " << gnral_counter << std::endl;
+		std::cout << "Sample read: " << gnral_counter << std::endl;
 
 		if(gnral_counter == _N)
 		{
@@ -31,7 +32,7 @@ void IDFT::doIt( void )
 	}
 	else if(calculating == 1)
 	{
-		//std::cout << "Calcuting IRDFT...." << std::endl;
+		std::cout << "Calcuting IRDFT...." << std::endl;
 
 		sc_uint<16> n, k;
 		double result1, result2;
@@ -54,7 +55,7 @@ void IDFT::doIt( void )
 		OutImaginary = result2/_N;
 
 		gnral_counter++;
-		//std::cout << "Result Calculated: " << gnral_counter << std::endl;
+		std::cout << "Result Calculated: " << gnral_counter << std::endl;
 		if(gnral_counter == _N)
 		{
 			readingSamples = 0;
@@ -64,12 +65,15 @@ void IDFT::doIt( void )
 		
 	}
 	else if(f_Enable == 1){
-		//std::cout << "Enabling...." << std::endl << std::endl;
+		std::cout << "Enabling...." << std::endl << std::endl;
 		Samples = (double*) calloc(N*2, sizeof(double));
 		_N = N;
 		gnral_counter = 0;
 		readingSamples = 1;
 		calculating = 0;
 	}	
+
+	readingSamplesFlag = readingSamples;
+	calculatingFlag = calculating;
 }
 
