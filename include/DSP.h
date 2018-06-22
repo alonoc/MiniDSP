@@ -8,9 +8,9 @@ constexpr int MemoryLogSize = 12;
 constexpr int opCodeMask = 60;
 constexpr int NMask = 0x00000000000FFFFF;
 
-constexpr int fftOpCode = 0; 
-constexpr int ifftOpCode = 1; 
-constexpr int ALUOpCode = 2; 
+constexpr int fftOpCode = 1; 
+constexpr int ifftOpCode = 2; 
+constexpr int ALUOpCode = 3; 
 
 SC_MODULE(DSP)
 {
@@ -18,10 +18,13 @@ SC_MODULE(DSP)
 	sc_in_clk clock;
 	sc_out<double> InRealBus;
 	sc_out<double> inImaginaryBus;
-	
+	sc_out<double> outRealBus;
+	sc_out<double> outImaginaryBus;
 
 	//Status;
 	bool sendingDataFlag = 0;
+	bool recivingDataFlag = 0;
+	bool startExecution = 0;
 	bool hasFinished = 1;
 	//Current instruction
 	sc_uint<4> opCode;
@@ -37,17 +40,25 @@ SC_MODULE(DSP)
 	int memory[MemorySize];
 	
 	void decode(void );
-	void auxDecodeNType(void);
-	void fillMemory(void);
 	void sendingData(void);
+	void recivingData(void);
+
+	//Aux Methods
+	void auxDecodeNType(void);
+	void auxSendingData(void);
+	void auxRecivingData(void);
+	void fillMemory(void);
 
 	SC_CTOR(DSP)
 	{
 		SC_METHOD( decode );
-			sensitive << clock.pos();;
+			sensitive << clock.pos();
 
 		SC_METHOD( sendingData );
-			sensitive << clock.pos();;
+			sensitive << clock.pos();
+
+		SC_METHOD( recivingData);
+			sensitive << clock.pos();
 	}
 
 

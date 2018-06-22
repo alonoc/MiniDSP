@@ -29,26 +29,66 @@ void DSP::decode(void){
 }
 
 void DSP::sendingData(void){
-	cout<<"A mandar data carajo";
+	
 	if(sendingDataFlag == 1)
 	{
 		if(opCode == fftOpCode){
+			auxSendingData();
 		}
 		else if(opCode == ifftOpCode){
-			if(NForFourier > currentDataIndex && currentDataIndex < MemorySize){
-			InRealBus = memory[currentDataIndex];
-			inImaginaryBus = 0;
-			currentDataIndex +=currentDataIndex;
-			cout<<"Voy a mandar "<<InRealBus<<"\n";
-		}
+			auxSendingData();
 		}
 		else if(opCode == ALUOpCode){
 
 		}
 	}
 }
-	
 
+void DSP::recivingData(void){
+	if(recivingDataFlag == 1){
+		if(opCode == fftOpCode){
+			auxRecivingData();
+		}
+		else if(opCode == ifftOpCode){
+			auxRecivingData();
+		}
+		else if(opCode == ALUOpCode){
+
+		}
+	}
+}
+
+void DSP::auxRecivingData(void){
+	if(NForFourier > currentDataIndex && currentDataIndex < MemorySize)
+	{
+		cout<<"Reciviendo datos \n";
+		memory[currentDataIndex] = outRealBus.read();
+		currentDataIndex =currentDataIndex+1;
+	}
+	else
+	{
+		sendingDataFlag = 0;
+		recivingDataFlag = 0;
+		currentDataIndex = 0;
+		hasFinished = 1;
+	}
+}
+
+void DSP::auxSendingData(void){
+	if(NForFourier > currentDataIndex && currentDataIndex < MemorySize)
+	{
+		cout<<"Mandando datos \n";
+		InRealBus = memory[currentDataIndex];
+		inImaginaryBus = 0;
+		currentDataIndex =currentDataIndex+1;
+	}
+	else
+	{
+		sendingDataFlag = 0;
+		recivingDataFlag = 1;
+		currentDataIndex = 0;
+	}
+}
 
 void DSP::auxDecodeNType(void){
 	sc_uint<64> inst = instruction.read();
