@@ -2,6 +2,7 @@
 #include <iomanip>
 #include "systemc.h"
 #include "IDFT.h"
+#include "DFTModule.h"
 #include "FPU32.h"
 #include "DSP.h"
 
@@ -13,50 +14,66 @@ int sc_main(int argc, char* argv[])
 	sc_signal<sc_uint<64>> inst;
 
 	//FFT and IFFT
-	sc_signal<bool> flag_en_IFFT;
-	sc_signal<bool> flag_reset_IFFT;
-	sc_signal<bool> flag_en_FFT;
-	sc_signal<bool> flag_reset_FFT;
-	sc_signal<int> FFT_N;
-	sc_signal<bool> rxIFFT;
-	sc_signal<bool> calculatingFlagIFFT;
+	sc_signal<bool> flag_en_IDFT;
+	sc_signal<bool> flag_reset_IDFT;
+	sc_signal<bool> flag_en_DFT;
+	sc_signal<bool> flag_reset_DFT;
+	sc_signal<int> DFT_N;
+	sc_signal<bool> rxIDFT;
+	sc_signal<bool> rxDFT;
+	sc_signal<bool> calculatingFlagIDFT;
+	sc_signal<bool> calculatingFlagDFT;
 	sc_signal<double> InRealBus;
 	sc_signal<double> inImaginaryBus;
 	sc_signal<double> outRealBus;
 	sc_signal<double> outImaginaryBus;
 
 	DSP dsp("DSP");
-	dsp.flag_en_IFFT(flag_en_IFFT);
-	dsp.flag_reset_IFFT(flag_reset_IFFT);
-	dsp.NForFourier(FFT_N);
+	dsp.flag_en_IDFT(flag_en_IDFT);
+	dsp.flag_reset_IDFT(flag_reset_IDFT);
+	dsp.NForFourier(DFT_N);
 	dsp.clock(clk);
 	dsp.instruction(inst);
 	dsp.InRealBus(InRealBus);
 	dsp.inImaginaryBus(inImaginaryBus);
 	dsp.outImaginaryBus(outImaginaryBus);
 	dsp.outRealBus(outRealBus);
-	dsp.rxSamplesFlag(rxIFFT);
-	dsp.calculatingFlag(calculatingFlagIFFT);
+	dsp.rxSamplesFlag(rxIDFT);
+	dsp.calculatingFlag(calculatingFlagIDFT);
 	dsp.fillMemory();
 
 	IDFT pIDFT("IDFFT");
 	pIDFT.clock(clk);
-	pIDFT.f_Enable(flag_en_IFFT);
-	pIDFT.reset(flag_reset_IFFT);
-	pIDFT.N(FFT_N);
+	pIDFT.f_Enable(flag_en_IDFT);
+	pIDFT.reset(flag_reset_IDFT);
+	pIDFT.N(DFT_N);
 	pIDFT.InReal(InRealBus);
 	pIDFT.InImaginary(inImaginaryBus);
 	pIDFT.OutReal(outRealBus);
 	pIDFT.OutImaginary(outImaginaryBus);
-	pIDFT.rxSamplesFlag(rxIFFT);
-	pIDFT.calculatingFlag(calculatingFlagIFFT);
+	pIDFT.rxSamplesFlag(rxIDFT);
+	pIDFT.calculatingFlag(calculatingFlagIDFT);
+
+	DFTModule pDFTMod("DFT");
+	pDFTMod.clock(clk);
+	pDFTMod.f_Enable(flag_en_DFT);
+	pDFTMod.f_RxSamples(rxDFT);
+	pDFTMod.f_Calculate(calculatingFlagDFT);
+	pDFTMod.Reset(flag_reset_DFT);
+	pDFTMod.N(DFT_N);
+	pDFTMod.Sample(InRealBus);
+	pDFTMod.OutReal(outRealBus);
+	pDFTMod.OutImaginary(outImaginaryBus);
 
 
 	// Initialice before tracing
 	clk = 0;
-	rxIFFT = 0;
-	calculatingFlagIFFT = 0;
-	flag_reset_IFFT = 0;
+	rxIDFT = 0;
+	rxDFT = 0;
+	calculatingFlagIDFT = 0;
+	calculatingFlagDFT = 0;
+	flag_reset_IDFT = 0;
+	flag_reset_DFT = 0;
 
 	// Starting trace
 	sc_trace_file *wf = sc_create_vcd_trace_file("IDFTing");
@@ -77,7 +94,7 @@ int sc_main(int argc, char* argv[])
 	    sc_start(1,SC_NS);
 	    clk = 1; 
 	    sc_start(1,SC_NS);
-    }
+	}	
 
 	std::cout << "Hellow World, SystemC" << std::endl;
 	
