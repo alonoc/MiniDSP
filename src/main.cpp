@@ -25,45 +25,53 @@ int sc_main(int argc, char* argv[])
 	sc_signal<bool> calculatingFlagDFT;
 	sc_signal<double> InRealBus;
 	sc_signal<double> inImaginaryBus;
-	sc_signal<double> outRealBus;
-	sc_signal<double> outImaginaryBus;
+	sc_signal<double> outRealBus_DFT;
+	sc_signal<double> outImaginaryBus_DFT;
+	sc_signal<double> outRealBus_IDFT;
+	sc_signal<double> outImaginaryBus_IDFT;
 
 	DSP dsp("DSP");
 	dsp.flag_en_IDFT(flag_en_IDFT);
+	dsp.flag_en_DFT(flag_en_DFT);
 	dsp.flag_reset_IDFT(flag_reset_IDFT);
+	dsp.flag_reset_DFT(flag_reset_DFT);
 	dsp.NForFourier(DFT_N);
 	dsp.clock(clk);
 	dsp.instruction(inst);
 	dsp.InRealBus(InRealBus);
 	dsp.inImaginaryBus(inImaginaryBus);
-	dsp.outImaginaryBus(outImaginaryBus);
-	dsp.outRealBus(outRealBus);
+	dsp.outImaginaryBus_DFT(outImaginaryBus_DFT);
+	dsp.outImaginaryBus_IDFT(outImaginaryBus_IDFT);
+	dsp.outRealBus_DFT(outRealBus_DFT);
+	dsp.outRealBus_IDFT(outRealBus_IDFT);
 	dsp.rxSamplesFlag(rxIDFT);
+	dsp.rxSamplesFlag_DFT(rxDFT);
 	dsp.calculatingFlag(calculatingFlagIDFT);
+	dsp.calculatingFlag_DFT(calculatingFlagDFT);
 	dsp.fillMemory();
 
-	/*IDFT pIDFT("IDFFT");
+	IDFT pIDFT("IDFFT");
 	pIDFT.clock(clk);
 	pIDFT.f_Enable(flag_en_IDFT);
 	pIDFT.reset(flag_reset_IDFT);
 	pIDFT.N(DFT_N);
 	pIDFT.InReal(InRealBus);
 	pIDFT.InImaginary(inImaginaryBus);
-	pIDFT.OutReal(outRealBus);
-	pIDFT.OutImaginary(outImaginaryBus);
+	pIDFT.OutReal(outRealBus_IDFT);
+	pIDFT.OutImaginary(outImaginaryBus_IDFT);
 	pIDFT.rxSamplesFlag(rxIDFT);
-	pIDFT.calculatingFlag(calculatingFlagIDFT);*/
+	pIDFT.calculatingFlag(calculatingFlagIDFT);
 
 	DFTModule pDFTMod("DFT");
 	pDFTMod.clock(clk);
-	pDFTMod.f_Enable(flag_en_IDFT);
-	pDFTMod.f_RxSamples(rxIDFT);
-	pDFTMod.f_Calculate(calculatingFlagIDFT);
+	pDFTMod.f_Enable(flag_en_DFT);
+	pDFTMod.f_RxSamples(rxDFT);
+	pDFTMod.f_Calculate(calculatingFlagDFT);
 	pDFTMod.Reset(flag_reset_DFT);
 	pDFTMod.N(DFT_N);
 	pDFTMod.Sample(InRealBus);
-	pDFTMod.OutReal(outRealBus);
-	pDFTMod.OutImg(outImaginaryBus);
+	pDFTMod.OutReal(outRealBus_DFT);
+	pDFTMod.OutImg(outImaginaryBus_DFT);
 
 
 	// Initialice before tracing
@@ -80,14 +88,18 @@ int sc_main(int argc, char* argv[])
 	wf->set_time_unit(1, SC_NS);
 
 	sc_trace(wf, clk, "Clock");
-	sc_trace(wf, flag_en_IDFT, "Flag");
-	sc_trace(wf, InRealBus, "RealData");
-	sc_trace(wf, outRealBus, "OutRealData");
-	sc_trace(wf, rxIDFT, "SendingData");
-	sc_trace(wf, calculatingFlagIDFT, "CalculatingData");
+	sc_trace(wf, flag_en_DFT, "DFT_Enable");
+	sc_trace(wf, flag_en_IDFT, "IDFT_Enable");
+	sc_trace(wf, InRealBus, "InputData");
+	sc_trace(wf, outRealBus_DFT, "OutputData_DFT");
+	sc_trace(wf, outRealBus_IDFT, "OutputData_IDFT");
+	sc_trace(wf, rxIDFT, "rxIDFT");
+	sc_trace(wf, rxDFT, "rxDFT");
+	sc_trace(wf, calculatingFlagIDFT, "IDFT_Working");
+	sc_trace(wf, calculatingFlagDFT, "DFT_Working");
 
 	sc_start(1, SC_NS);
-	inst = 0x2000000000000005;
+	inst = 0x1000000000000005;
 	
 	for (int i=0;i<20;i++) {
 	    clk = 0; 

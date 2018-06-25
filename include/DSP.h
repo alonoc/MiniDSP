@@ -17,17 +17,30 @@ SC_MODULE(DSP)
 {
 	sc_in< sc_uint<64> > instruction;
 	sc_in_clk clock;
-	sc_in<double> outRealBus;
-	sc_in<double> outImaginaryBus;
-	sc_out<bool> rxSamplesFlag;
-	sc_out<bool> calculatingFlag;
+	//Shared buses for FFT and IFFT
 	sc_out<double> InRealBus;
 	sc_out<double> inImaginaryBus;
-	sc_out<bool> flag_en_IDFT;
-	sc_out<bool> flag_reset_IDFT;
 	sc_out<int> NForFourier;
 
-	
+	//IDFT Flags
+	sc_out<bool> flag_en_IDFT;
+	sc_out<bool> flag_reset_IDFT;
+	sc_out<bool> rxSamplesFlag;
+	sc_out<bool> calculatingFlag;
+	sc_in<double> outRealBus_IDFT;
+	sc_in<double> outImaginaryBus_IDFT;
+
+	//DFT Flags
+	sc_out<bool> flag_en_DFT;
+	sc_out<bool> flag_reset_DFT;
+	sc_out<bool> rxSamplesFlag_DFT;
+	sc_out<bool> calculatingFlag_DFT;
+	sc_in<double> outRealBus_DFT;
+	sc_in<double> outImaginaryBus_DFT;
+
+	//Bus mux for inputs
+	double outRealBus;
+	double outImaginaryBus;
 
 	//Status;
 	int initSendingData = 0;
@@ -56,6 +69,9 @@ SC_MODULE(DSP)
 	void recivingData(void);
 	void enableStateMachine(void);
 
+	//Mux fot input data
+	void muxInputData(void);
+
 	//Aux Methods
 	void auxDecodeNType(void);
 	void auxSendingData(void);
@@ -74,6 +90,9 @@ SC_MODULE(DSP)
 			sensitive << clock.pos();
 
 		SC_METHOD(enableStateMachine);
+			sensitive << clock.pos();
+
+		SC_METHOD(muxInputData);
 			sensitive << clock.pos();
 
 	}

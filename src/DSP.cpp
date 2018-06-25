@@ -52,9 +52,14 @@ void DSP::sendingData(void){
 	}
 	else if(initSendingData == 3){
 		initSendingData = 0;
-		rxSamplesFlag = 1;
+		if(opCode == fftOpCode){
+			rxSamplesFlag_DFT = 1;
+		}
+		else if(opCode == ifftOpCode){
+			rxSamplesFlag = 1;
+		}
 	}
-	else if(rxSamplesFlag == 1 )
+	else if(rxSamplesFlag == 1 || rxSamplesFlag_DFT == 1)
 	{
 		if(opCode == fftOpCode){
 			auxSendingData();
@@ -82,6 +87,7 @@ void DSP::auxSendingData(void){
 	else
 	{
 		rxSamplesFlag = 0;
+		rxSamplesFlag_DFT = 0;
 		initRecivingData = 1;
 		currentDataIndex = 0;
 	}
@@ -90,13 +96,16 @@ void DSP::auxSendingData(void){
 void DSP::enableStateMachine(void){
 	if(opCode == lastOpCode){
 		flag_en_IDFT = 0;
+		flag_en_DFT = 0;
 	}
 	else{
 		if(opCode == fftOpCode){
-			
+			cout<<"Sending Enable to DFT\n";
+			flag_en_DFT = 1;
+			lastOpCode = opCode;
 		}
 		else if(opCode == ifftOpCode){
-			cout<<"Sending Enable\n";
+			cout<<"Sending Enable to IDFT\n";
 			flag_en_IDFT = 1;
 			lastOpCode = opCode;
 		}
@@ -106,8 +115,24 @@ void DSP::enableStateMachine(void){
 	}
 }
 
+void DSP::muxInputData(void){
+	if(opCode == fftOpCode){
+		outRealBus = outRealBus_DFT.read();
+		outImaginaryBus = outImaginaryBus_DFT.read();
+	}
+	else if(opCode == ifftOpCode){
+		outRealBus = outRealBus_IDFT.read();
+		outImaginaryBus = outImaginaryBus_IDFT.read();
+	}
+	else{
+		outRealBus = 0;
+		outImaginaryBus = 0;
+	}
+}
+
+
 void DSP::recivingData(void){
-	if(calculatingFlag == 1 || initRecivingData == 1){
+	if(calculatingFlag == 1 || initRecivingData == 1 || calculatingFlag_DFT == 1){
 		if(opCode == fftOpCode){
 			auxRecivingData();
 		}
@@ -120,7 +145,12 @@ void DSP::recivingData(void){
 
 		if(initRecivingData == 1){
 			initRecivingData = 0;
-			calculatingFlag = 1;
+			if(opCode == ifftOpCode){
+				calculatingFlag = 1;
+			}
+			else if(opCode == fftOpCode){
+				calculatingFlag_DFT = 1;
+			}
 		}
 	}
 }
@@ -129,13 +159,14 @@ void DSP::auxRecivingData(void){
 	if(NForFourier > currentDataIndex && currentDataIndex < MemorySize)
 	{
 		cout<<"Reciviendo datos \n";
-		memory[currentDataIndex] = outRealBus.read();
+		memory[currentDataIndex] = outRealBus;
 		currentDataIndex =currentDataIndex+1;
 	}
 	else
 	{
 		calculatingFlag = 0;
 		currentDataIndex = 0;
+		calculatingFlag_DFT = 0;
 		hasFinished = 1;
 	}
 }
