@@ -89,7 +89,7 @@ void DSP::auxSendingData(void){
 
 void DSP::enableStateMachine(void){
 	if(opCode == lastOpCode){
-		flag_en_IFFT = 0;
+		flag_en_IDFT = 0;
 	}
 	else{
 		if(opCode == fftOpCode){
@@ -97,7 +97,7 @@ void DSP::enableStateMachine(void){
 		}
 		else if(opCode == ifftOpCode){
 			cout<<"Sending Enable\n";
-			flag_en_IFFT = 1;
+			flag_en_IDFT = 1;
 			lastOpCode = opCode;
 		}
 		else if(opCode == ALUOpCode){

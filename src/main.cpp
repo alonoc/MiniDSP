@@ -42,7 +42,7 @@ int sc_main(int argc, char* argv[])
 	dsp.calculatingFlag(calculatingFlagIDFT);
 	dsp.fillMemory();
 
-	IDFT pIDFT("IDFFT");
+	/*IDFT pIDFT("IDFFT");
 	pIDFT.clock(clk);
 	pIDFT.f_Enable(flag_en_IDFT);
 	pIDFT.reset(flag_reset_IDFT);
@@ -52,18 +52,18 @@ int sc_main(int argc, char* argv[])
 	pIDFT.OutReal(outRealBus);
 	pIDFT.OutImaginary(outImaginaryBus);
 	pIDFT.rxSamplesFlag(rxIDFT);
-	pIDFT.calculatingFlag(calculatingFlagIDFT);
+	pIDFT.calculatingFlag(calculatingFlagIDFT);*/
 
 	DFTModule pDFTMod("DFT");
 	pDFTMod.clock(clk);
-	pDFTMod.f_Enable(flag_en_DFT);
-	pDFTMod.f_RxSamples(rxDFT);
-	pDFTMod.f_Calculate(calculatingFlagDFT);
+	pDFTMod.f_Enable(flag_en_IDFT);
+	pDFTMod.f_RxSamples(rxIDFT);
+	pDFTMod.f_Calculate(calculatingFlagIDFT);
 	pDFTMod.Reset(flag_reset_DFT);
 	pDFTMod.N(DFT_N);
 	pDFTMod.Sample(InRealBus);
 	pDFTMod.OutReal(outRealBus);
-	pDFTMod.OutImaginary(outImaginaryBus);
+	pDFTMod.OutImg(outImaginaryBus);
 
 
 	// Initialice before tracing
@@ -80,11 +80,11 @@ int sc_main(int argc, char* argv[])
 	wf->set_time_unit(1, SC_NS);
 
 	sc_trace(wf, clk, "Clock");
-	sc_trace(wf, flag_en_IFFT, "Flag");
+	sc_trace(wf, flag_en_IDFT, "Flag");
 	sc_trace(wf, InRealBus, "RealData");
 	sc_trace(wf, outRealBus, "OutRealData");
-	sc_trace(wf, rxIFFT, "SendingData");
-	sc_trace(wf, calculatingFlagIFFT, "CalculatingData");
+	sc_trace(wf, rxIDFT, "SendingData");
+	sc_trace(wf, calculatingFlagIDFT, "CalculatingData");
 
 	sc_start(1, SC_NS);
 	inst = 0x2000000000000005;

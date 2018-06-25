@@ -23,8 +23,8 @@ SC_MODULE(DSP)
 	sc_out<bool> calculatingFlag;
 	sc_out<double> InRealBus;
 	sc_out<double> inImaginaryBus;
-	sc_out<bool> flag_en_IFFT;
-	sc_out<bool> flag_reset_IFFT;
+	sc_out<bool> flag_en_IDFT;
+	sc_out<bool> flag_reset_IDFT;
 	sc_out<int> NForFourier;
 
 	

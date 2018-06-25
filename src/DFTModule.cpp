@@ -1,7 +1,7 @@
 #include "DFTModule.h"
 #include <math.h>
 
-void DFTModule::DTF( void )
+void DFTModule::DFT( void )
 {
     if(Reset)
     {
@@ -12,7 +12,7 @@ void DFTModule::DTF( void )
     else if(f_Enable.read())
     {
         std::cout << "*Enabling DFT Module*" << std::endl << std::endl;
-        Samples = new double[N];
+        _Samples = new double[N];
         _N = N;
         _Counter = 0;
     }
@@ -21,7 +21,7 @@ void DFTModule::DTF( void )
         if(_Counter == 0) 
 	    std::cout << "*Receiving Samples*" << std::endl;
         
-	Samples[_Counter++] = Sample;
+	_Samples[_Counter++] = Sample;
 
         if(_Counter == _N)
         {
@@ -38,14 +38,14 @@ void DFTModule::DTF( void )
     
 	for(int n = 0; n < _N; n++)
 	{
-            resReal += Samples[n] * cos(-2.0*M_PI*n*_Counter / _N);
-	    resImg  += Samples[n] * sin(-2.0*M_PI*n*_Counter / _N);
+            resReal += _Samples[n] * cos(-2.0*M_PI*n*_Counter / _N);
+	    resImg  += _Samples[n] * sin(-2.0*M_PI*n*_Counter / _N);
 	}
         
 	OutReal = resReal;
         OutImg = resImg;
 
-        if(++Counter == _N)
+        if(++_Counter == _N)
         {
             std::cout << "*Processed " << _Counter << " samples*" << std::endl;
             _Counter = 0;

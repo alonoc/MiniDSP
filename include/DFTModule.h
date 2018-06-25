@@ -23,15 +23,15 @@ SC_MODULE(DFTModule)
 
     SC_CTOR(DFTModule)
     {
-        SC_METHOD(DTF);
+        SC_METHOD(DFT);
         sensitive << clock.pos();
-        sensitive << reset;
+        sensitive << Reset;
     }
 
     ~DFTModule()
     {
-        if(Samples)
-            delete[] Samples;
+        if(_Samples)
+            delete[] _Samples;
     }
 };
 
