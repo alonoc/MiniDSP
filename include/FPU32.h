@@ -8,12 +8,14 @@ SC_MODULE(FloatingAdder32)
 	sc_in< sc_uint<32> > OpA;
 	sc_in< sc_uint<32> > OpB;
 	sc_out< sc_uint<32> > Result;
+	sc_out< sc_uint<1> > Overflow;
+	sc_out< sc_uint<1> > Underflow;
 
-	void doIt( void );
+	void Add( void );
 
 	SC_CTOR(FloatingAdder32)
 	{
-		SC_METHOD( doIt );
+		SC_METHOD( Add );
 			sensitive << OpA;
 			sensitive << OpB;
 	}

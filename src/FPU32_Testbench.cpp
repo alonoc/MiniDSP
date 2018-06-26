@@ -93,5 +93,54 @@ void TestFloatingMultiplier32()
 
 void TestFloatingAdder32()
 {
+	// Basic testing
+	sc_signal<sc_uint<32> > AddInA;
+	sc_signal<sc_uint<32> > AddInB;
+	sc_signal<sc_uint<32> > AddOut;
+	sc_signal<sc_uint<1> > Overflow;
+	sc_signal<sc_uint<1> > Underflow;
+	FloatingAdder32 FAdd32("FADD32");
 
+	// Connect ports
+	FAdd32.OpA(AddInA);
+	FAdd32.OpB(AddInB);
+	FAdd32.Result(AddOut);
+	FAdd32.Overflow(Overflow);
+	FAdd32.Underflow(Underflow);
+
+	// VCD file
+	sc_trace_file* TraceLogger = sc_create_vcd_trace_file("FADD32 TEST");
+	TraceLogger->set_time_unit(1, SC_NS);
+
+	// Select signals to dump
+	sc_trace(TraceLogger, AddInA, "OpA");
+	sc_trace(TraceLogger, AddInB, "OpB");
+	sc_trace(TraceLogger, AddOut, "Out");
+	sc_trace(TraceLogger, Overflow, "Overflow");
+	sc_trace(TraceLogger, Underflow, "Underflow");
+	
+	// {====================}
+	// {	NORMAL CASES	}
+	// {====================}
+
+	// Initialize values
+	AddInA = 0x00000000;
+	AddInB = 0x00000000;
+	sc_start(1, SC_NS);
+
+	// Test 1 (Result = 36 or 0xC32B0000)
+	AddInA = 0x414C0000;	//  12.75
+	AddInB = 0x41BA0000;	//  23.25
+	sc_start(1, SC_NS);
+
+	// Test 1 (Result = -15002.25 or 0xC66A6900)
+	AddInA = 0xBFC00000;	//  -1.5
+	AddInB = 0xC66A6300;	//  -15000.75
+	sc_start(1, SC_NS);
+	
+	// {====================}
+	// {	SPECIAL CASES	}
+	// {====================}
+	
+	sc_close_vcd_trace_file(TraceLogger);
 }
