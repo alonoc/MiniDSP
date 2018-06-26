@@ -27,11 +27,11 @@ SC_MODULE(FloatingMultiplier32)
 	sc_out< sc_uint<1> > Overflow;
 	sc_out< sc_uint<1> > Underflow;
 
-	void doIt( void );
+	void Multiply( void );
 
 	SC_CTOR(FloatingMultiplier32)
 	{
-		SC_METHOD( doIt );
+		SC_METHOD( Multiply );
 			sensitive << OpA;
 			sensitive << OpB;
 	}
