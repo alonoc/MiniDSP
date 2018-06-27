@@ -3,5 +3,6 @@
 
 void TestFloatingMultiplier32();
 void TestFloatingAdder32();
+void TestFPU32();
 
 #endif

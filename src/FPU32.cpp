@@ -10,7 +10,7 @@ void FloatingAdder32::Add( void )
 	sc_uint<8> ExpDiff = 0;
 	sc_uint<9> ExpResult = 0;
 	sc_uint<32> TempResult = 0;
-
+	
 	// Reset flags
 	Overflow.write(0);
 	Underflow.write(0);
@@ -156,4 +156,45 @@ void FloatingMultiplier32::Multiply( void )
 	
 	// Finally just write the result in the port
 	Result.write(TempResult);
+}
+
+void MuxTwoPorts32Bits::Multiplex( void )
+{
+	switch(Select.read())
+	{
+		case 0:
+			Out.write(InOne.read());
+			break;
+		case 1:
+			Out.write(InTwo.read());
+			break;
+		case 2:
+		case 3:
+		default:
+			Out.write(0);
+			break;
+	}
+}
+
+void MuxTwoPorts1Bit::Multiplex( void )
+{
+	switch(Select.read())
+	{
+		case 0:
+			Out.write(InOne.read());
+			break;
+		case 1:
+			Out.write(InTwo.read());
+			break;
+		case 2:
+		case 3:
+		default:
+			Out.write(0);
+			break;
+	}
+}
+
+void FPU32::Execute( void )
+{
+
 }

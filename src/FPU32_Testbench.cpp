@@ -107,11 +107,11 @@ void TestFloatingAdder32()
 	FAdd32.Result(AddOut);
 	FAdd32.Overflow(Overflow);
 	FAdd32.Underflow(Underflow);
-
+	
 	// VCD file
 	sc_trace_file* TraceLogger = sc_create_vcd_trace_file("FADD32 TEST");
 	TraceLogger->set_time_unit(1, SC_NS);
-
+	
 	// Select signals to dump
 	sc_trace(TraceLogger, AddInA, "OpA");
 	sc_trace(TraceLogger, AddInB, "OpB");
@@ -122,13 +122,13 @@ void TestFloatingAdder32()
 	// {====================}
 	// {	NORMAL CASES	}
 	// {====================}
-
+	
 	// Initialize values
 	AddInA = 0x00000000;
 	AddInB = 0x00000000;
 	sc_start(1, SC_NS);
 
-	// Test 1 (Result = 36 or 0xC32B0000)
+	// Test 1 (Result = 36 or 0x42100000)
 	AddInA = 0x414C0000;	//  12.75
 	AddInB = 0x41BA0000;	//  23.25
 	sc_start(1, SC_NS);
@@ -137,10 +137,78 @@ void TestFloatingAdder32()
 	AddInA = 0xBFC00000;	//  -1.5
 	AddInB = 0xC66A6300;	//  -15000.75
 	sc_start(1, SC_NS);
-	
+
 	// {====================}
 	// {	SPECIAL CASES	}
 	// {====================}
 	
+	sc_close_vcd_trace_file(TraceLogger);
+}
+
+void TestFPU32()
+{
+	// Input signals
+	sc_signal< sc_uint<32> > OpA;
+	sc_signal< sc_uint<32> > OpB;
+	sc_signal< sc_uint<2> > OpCode;
+
+	// Output signals
+	sc_signal< sc_uint<32> > Out;
+	sc_signal< sc_uint<1> > Overflow;
+	sc_signal< sc_uint<1> > Underflow;
+
+	// DUT
+	FPU32 Fpu32("FPU32");
+
+	// Mapping
+	Fpu32.OpA(OpA);
+	Fpu32.OpB(OpB);
+	Fpu32.Out(Out);
+	Fpu32.OpCode(OpCode);
+	Fpu32.Overflow(Overflow);
+	Fpu32.Underflow(Underflow);
+	
+	// VCD file
+	sc_trace_file* TraceLogger = sc_create_vcd_trace_file("FPU32 TEST");
+	TraceLogger->set_time_unit(1, SC_NS);
+	
+	// Select signals to dump
+	sc_trace(TraceLogger, OpA, "OpA");
+	sc_trace(TraceLogger, OpB, "OpB");
+	sc_trace(TraceLogger, Out, "Out");
+	sc_trace(TraceLogger, OpCode, "OpCode");
+	sc_trace(TraceLogger, Overflow, "Overflow");
+	sc_trace(TraceLogger, Underflow, "Underflow");
+
+	// Test #1 OpCode 2 [Unsupported Opcode, everything should be 0]
+	OpCode = 2;
+	OpA = 0xFFFFFFFF;
+	OpB = 0xFFFFFFFF;
+	sc_start(1, SC_NS);
+
+	// Test #2 OpCode 3 [Unsupported OpCode, everything should be 0]
+	OpCode = 3;
+	OpA = 0xFFFFFFFF;
+	OpB = 0xFFFFFFFF;
+	sc_start(1, SC_NS);
+
+	// Test #3 OpCode 0 [Values should be added, Result = 36 or 0xC32B0000]
+	OpCode = 0;
+	OpA = 0x414C0000;	//  12.75
+	OpB = 0x41BA0000;	//  23.25
+	sc_start(1, SC_NS);
+
+	// Test #4 OpCode 1 [Values should be multiplied, Result = 46.875 or 0x423B8000]
+	OpCode = 1;
+	OpA = 0x41480000;	//  12.5
+	OpB = 0x40700000;	//  3.75
+	sc_start(1, SC_NS);
+
+	// Test #5 OpCode 1 [Values should be multiplied, Result = -Inf 0xFF800000, and Overflow]
+	OpCode = 1;
+	OpA = 0x7F480000;	//  2.552117 E38
+	OpB = 0xFF480000;	// -2.552117 E38
+	sc_start(1, SC_NS);
+
 	sc_close_vcd_trace_file(TraceLogger);
 }
