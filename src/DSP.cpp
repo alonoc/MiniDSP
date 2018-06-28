@@ -2,7 +2,7 @@
 
 
 void DSP::fillMemory(void){
-	double samp_real[] = {35,-8.2426,-3,0.2426,-5,0.2426,-3,-8.2426};
+	double samp_real[] = {2,-8.2426,-3,0.2426,-5,0.2426,-3,-8.2426};
 	for(int i = 0; i < 8; i++){
 		memory[i] = samp_real[i];
 	}
@@ -24,7 +24,12 @@ void DSP::decode(void){
 			auxDecodeNType();
 		}
 		else if(opCode == ALUOpCode){
-			cout << "Soy una ALU\n";
+			cout<<"Soy una ALU \n";
+			OpCodeAlu = inst >> OpCodeAluMask;
+			long opaDir = inst & opaDirMask;
+			long opbDir = inst & opbDirMask;
+			OpA = memory[opaDir];
+			OpB = memory[opaDir];
 		}
 	}
 }

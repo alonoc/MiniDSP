@@ -30,6 +30,15 @@ int sc_main(int argc, char* argv[])
 	sc_signal<double> outRealBus_IDFT;
 	sc_signal<double> outImaginaryBus_IDFT;
 
+
+	// FPU32
+	sc_signal< sc_uint<32> > OpA;
+	sc_signal< sc_uint<32> > OpB;
+	sc_signal< sc_uint<2> > OpCodeAlu;
+	sc_signal< sc_uint<32> > Out;
+	sc_signal< sc_uint<1> > Overflow;
+	sc_signal< sc_uint<1> > Underflow;
+
 	DSP dsp("DSP");
 	dsp.flag_en_IDFT(flag_en_IDFT);
 	dsp.flag_en_DFT(flag_en_DFT);
@@ -48,6 +57,12 @@ int sc_main(int argc, char* argv[])
 	dsp.rxSamplesFlag_DFT(rxDFT);
 	dsp.calculatingFlag(calculatingFlagIDFT);
 	dsp.calculatingFlag_DFT(calculatingFlagDFT);
+	dsp.OpA(OpA);
+	dsp.OpB(OpB);
+	dsp.OpCodeAlu(OpCodeAlu);
+	dsp.Out(Out);
+	dsp.Overflow(Overflow);
+	dsp.Underflow(Underflow);
 	dsp.fillMemory();
 
 	IDFT pIDFT("IDFFT");
@@ -73,6 +88,14 @@ int sc_main(int argc, char* argv[])
 	pDFTMod.OutReal(outRealBus_DFT);
 	pDFTMod.OutImg(outImaginaryBus_DFT);
 
+	// DUT
+	FPU32 Fpu32("FPU32");
+	Fpu32.OpA(OpA);
+	Fpu32.OpB(OpB);
+	Fpu32.Out(Out);
+	Fpu32.OpCode(OpCodeAlu);
+	Fpu32.Overflow(Overflow);
+	Fpu32.Underflow(Underflow);
 
 	// Initialice before tracing
 	clk = 0;
@@ -97,9 +120,15 @@ int sc_main(int argc, char* argv[])
 	sc_trace(wf, rxDFT, "rxDFT");
 	sc_trace(wf, calculatingFlagIDFT, "IDFT_Working");
 	sc_trace(wf, calculatingFlagDFT, "DFT_Working");
+	sc_trace(wf, OpA, "OpA");
+	sc_trace(wf, OpB, "OpB");
+	sc_trace(wf, Out, "Out");
+	sc_trace(wf, OpCodeAlu, "OpCodeAlu");
+	sc_trace(wf, Overflow, "Overflow");
+	sc_trace(wf, Underflow, "Underflow");
 
 	sc_start(1, SC_NS);
-	inst = 0x1000000000000005;
+	inst = 0x3200000000000005;
 	
 	for (int i=0;i<20;i++) {
 	    clk = 0; 

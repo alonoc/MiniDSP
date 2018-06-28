@@ -7,7 +7,11 @@
 constexpr int MemorySize = 4096; 
 constexpr int MemoryLogSize = 12;
 constexpr int opCodeMask = 60;
-constexpr int NMask = 0x00000000000FFFFF;
+constexpr int OpCodeAluMask = 56;
+
+constexpr long opaDirMask = 0x00FFFFF000000000;
+constexpr long opbDirMask = 0x0000000FFFFF0000;
+constexpr long NMask = 0x00000000000FFFFF;
 
 constexpr int fftOpCode = 1; 
 constexpr int ifftOpCode = 2; 
@@ -37,6 +41,14 @@ SC_MODULE(DSP)
 	sc_out<bool> calculatingFlag_DFT;
 	sc_in<double> outRealBus_DFT;
 	sc_in<double> outImaginaryBus_DFT;
+
+	//FPU32
+	sc_out< sc_uint<32> > OpA;
+	sc_out< sc_uint<32> > OpB;
+	sc_out< sc_uint<2> > OpCodeAlu;
+	sc_in< sc_uint<32> > Out;
+	sc_in< sc_uint<1> > Overflow;
+	sc_in< sc_uint<1> > Underflow;
 
 	//Bus mux for inputs
 	double outRealBus;
