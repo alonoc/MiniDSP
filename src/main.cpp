@@ -5,6 +5,7 @@
 #include "DFTModule.h"
 #include "FPU32.h"
 #include "DSP.h"
+#include "ALU.h"
 
 int sc_main(int argc, char* argv[])
 {
@@ -31,13 +32,16 @@ int sc_main(int argc, char* argv[])
 	sc_signal<double> outImaginaryBus_IDFT;
 
 
-	// FPU32
+	// FPU32 & ALU
 	sc_signal< sc_uint<32> > OpA;
 	sc_signal< sc_uint<32> > OpB;
-	sc_signal< sc_uint<2> > OpCodeAlu;
-	sc_signal< sc_uint<32> > Out;
+	sc_signal< sc_uint<4> > OpCodeAlu;
+	sc_signal< sc_uint<32> > OutALU;
+	sc_signal< sc_uint<32> > OutFPU;
 	sc_signal< sc_uint<1> > Overflow;
 	sc_signal< sc_uint<1> > Underflow;
+	sc_signal < bool > ZERO;
+
 
 	DSP dsp("DSP");
 	dsp.flag_en_IDFT(flag_en_IDFT);
@@ -60,7 +64,8 @@ int sc_main(int argc, char* argv[])
 	dsp.OpA(OpA);
 	dsp.OpB(OpB);
 	dsp.OpCodeAlu(OpCodeAlu);
-	dsp.Out(Out);
+	dsp.OutFPU(OutFPU);
+	dsp.OutALU(OutALU);
 	dsp.Overflow(Overflow);
 	dsp.Underflow(Underflow);
 	dsp.fillMemory();
@@ -92,10 +97,17 @@ int sc_main(int argc, char* argv[])
 	FPU32 Fpu32("FPU32");
 	Fpu32.OpA(OpA);
 	Fpu32.OpB(OpB);
-	Fpu32.Out(Out);
+	Fpu32.Out(OutFPU);
 	Fpu32.OpCode(OpCodeAlu);
 	Fpu32.Overflow(Overflow);
 	Fpu32.Underflow(Underflow);
+
+	ALU alu("ALU");
+	alu.OP(OpCodeAlu);
+	alu.OPa(OpA);
+	alu.OPb(OpB);
+	alu.ZERO(ZERO);
+	alu.RESULT(OutALU);
 
 	// Initialice before tracing
 	clk = 0;
@@ -122,13 +134,14 @@ int sc_main(int argc, char* argv[])
 	sc_trace(wf, calculatingFlagDFT, "DFT_Working");
 	sc_trace(wf, OpA, "OpA");
 	sc_trace(wf, OpB, "OpB");
-	sc_trace(wf, Out, "Out");
+	sc_trace(wf, OutALU, "OutALU");
+	sc_trace(wf, OutFPU, "OutFPU");
 	sc_trace(wf, OpCodeAlu, "OpCodeAlu");
 	sc_trace(wf, Overflow, "Overflow");
 	sc_trace(wf, Underflow, "Underflow");
 
 	sc_start(1, SC_NS);
-	inst = 0x3200000000000005;
+	inst = 0x4000000000000005;
 	
 	for (int i=0;i<20;i++) {
 	    clk = 0; 

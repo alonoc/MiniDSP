@@ -44,7 +44,7 @@ SC_MODULE(MuxTwoPorts32Bits)
 {
 	sc_in< sc_uint<32> > InOne;
 	sc_in< sc_uint<32> > InTwo;
-	sc_in< sc_uint<2> > Select;
+	sc_in< sc_uint<4> > Select;
 	sc_out< sc_uint<32> > Out;
 
 	void Multiplex( void );
@@ -62,7 +62,7 @@ SC_MODULE(MuxTwoPorts1Bit)
 {
 	sc_in< sc_uint<1> > InOne;
 	sc_in< sc_uint<1> > InTwo;
-	sc_in< sc_uint<2> > Select;
+	sc_in< sc_uint<4> > Select;
 	sc_out< sc_uint<1> > Out;
 	
 	void Multiplex( void );
@@ -81,7 +81,7 @@ SC_MODULE(FPU32)
 public:
 	sc_in< sc_uint<32> > OpA;
 	sc_in< sc_uint<32> > OpB;
-	sc_in< sc_uint<2> > OpCode;
+	sc_in< sc_uint<4> > OpCode;
 	sc_out< sc_uint<32> > Out;
 	sc_out< sc_uint<1> > Overflow;
 	sc_out< sc_uint<1> > Underflow;

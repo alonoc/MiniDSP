@@ -23,6 +23,14 @@ void DSP::decode(void){
 		else if(opCode == ifftOpCode){
 			auxDecodeNType();
 		}
+		else if(opCode == FPUOpCode){
+			cout<<"Soy una FPU \n";
+			OpCodeAlu = inst >> OpCodeAluMask;
+			long opaDir = inst & opaDirMask;
+			long opbDir = inst & opbDirMask;
+			OpA = memory[opaDir];
+			OpB = memory[opaDir];
+		}
 		else if(opCode == ALUOpCode){
 			cout<<"Soy una ALU \n";
 			OpCodeAlu = inst >> OpCodeAluMask;
@@ -72,7 +80,7 @@ void DSP::sendingData(void){
 		else if(opCode == ifftOpCode){
 			auxSendingData();
 		}
-		else if(opCode == ALUOpCode){
+		else if(opCode == FPUOpCode){
 
 		}
 
@@ -114,7 +122,7 @@ void DSP::enableStateMachine(void){
 			flag_en_IDFT = 1;
 			lastOpCode = opCode;
 		}
-		else if(opCode == ALUOpCode){
+		else if(opCode == FPUOpCode){
 
 		}
 	}
@@ -144,7 +152,7 @@ void DSP::recivingData(void){
 		else if(opCode == ifftOpCode){
 			auxRecivingData();
 		}
-		else if(opCode == ALUOpCode){
+		else if(opCode == FPUOpCode){
 
 		}
 

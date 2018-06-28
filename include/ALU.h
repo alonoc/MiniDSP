@@ -2,13 +2,14 @@
 
 SC_MODULE(ALU)
 {
-	sc_in < sc_uint<3> > OP;
-	sc_in < sc_uint<4> > OPa,OPb;
+	sc_in < sc_uint<4> > OP;
+	sc_in < sc_uint<32> > OPa,OPb;
 	sc_out < bool > ZERO;
-	sc_out < sc_uint<4> >RESULT;
+	sc_out < sc_uint<32> >RESULT;
 
-    sc_uint<4> data1, data2;
-    sc_uint<5> result;
+    sc_uint<32> data1, data2;
+    sc_uint<32> result;
+
 
     void operate();
     

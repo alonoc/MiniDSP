@@ -15,7 +15,8 @@ constexpr long NMask = 0x00000000000FFFFF;
 
 constexpr int fftOpCode = 1; 
 constexpr int ifftOpCode = 2; 
-constexpr int ALUOpCode = 3; 
+constexpr int FPUOpCode = 3; 
+constexpr int ALUOpCode = 4;
 
 SC_MODULE(DSP)
 {
@@ -45,8 +46,9 @@ SC_MODULE(DSP)
 	//FPU32
 	sc_out< sc_uint<32> > OpA;
 	sc_out< sc_uint<32> > OpB;
-	sc_out< sc_uint<2> > OpCodeAlu;
-	sc_in< sc_uint<32> > Out;
+	sc_out< sc_uint<4> > OpCodeAlu;
+	sc_in< sc_uint<32> > OutFPU;
+	sc_in< sc_uint<32> > OutALU;
 	sc_in< sc_uint<1> > Overflow;
 	sc_in< sc_uint<1> > Underflow;
 

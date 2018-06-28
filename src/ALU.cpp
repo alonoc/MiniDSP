@@ -36,8 +36,8 @@ void ALU::operate()
                 
                             
         }
-        
-        RESULT.write(result.range(3, 0));
+        RESULT = result;
+       // RESULT.write(result.range(3, 0));
         
               
         if(result == 0)

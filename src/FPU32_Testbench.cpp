@@ -150,7 +150,7 @@ void TestFPU32()
 	// Input signals
 	sc_signal< sc_uint<32> > OpA;
 	sc_signal< sc_uint<32> > OpB;
-	sc_signal< sc_uint<2> > OpCode;
+	sc_signal< sc_uint<4> > OpCode;
 
 	// Output signals
 	sc_signal< sc_uint<32> > Out;
