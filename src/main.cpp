@@ -141,14 +141,34 @@ int sc_main(int argc, char* argv[])
 	sc_trace(wf, Underflow, "Underflow");
 
 	sc_start(1, SC_NS);
-	inst = 0x4000000000000005;
-	
-	for (int i=0;i<20;i++) {
+	inst = 0x4000000000100005;
+	for (int i=0;i<5;i++) {
 	    clk = 0; 
 	    sc_start(1,SC_NS);
 	    clk = 1; 
 	    sc_start(1,SC_NS);
-	}	
+	}
+	inst = 0x3100000000200000;
+	for (int i=0;i<5;i++) {
+	    clk = 0; 
+	    sc_start(1,SC_NS);
+	    clk = 1; 
+	    sc_start(1,SC_NS);
+	}
+	inst = 0x2000000000200005;
+	for (int i=0;i<10;i++) {
+	    clk = 0; 
+	    sc_start(1,SC_NS);
+	    clk = 1; 
+	    sc_start(1,SC_NS);
+	}
+	inst = 0x1000000000200005;
+	for (int i=0;i<30;i++) {
+	    clk = 0; 
+	    sc_start(1,SC_NS);
+	    clk = 1; 
+	    sc_start(1,SC_NS);
+	}
 
 	std::cout << "Hellow World, SystemC" << std::endl;
 	
