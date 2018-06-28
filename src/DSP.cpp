@@ -3,9 +3,19 @@
 
 void DSP::fillMemory(void){
 	double samp_real[] = {2,-8.2426,-3,0.2426,-5,0.2426,-3,-8.2426};
-	for(int i = 0; i < 8; i++){
-		memory[i] = samp_real[i];
+	
+	for(int i = 0; i < 4000; i++){
+		if(i < 5){
+			memory[i] = samp_real[i];
+		}
+		else{
+			memory[i] = i;
+		}
 	}
+	memory[10] = 0x00000000414C0000;
+	memory[11] = 0x0000000041BA0000;
+	memory[12] = 0x00000000C1900000;
+	memory[13] = 0x0000000041180000;
 }
 
 
@@ -28,16 +38,20 @@ void DSP::decode(void){
 			OpCodeAlu = inst >> OpCodeAluMask;
 			long opaDir = inst & opaDirMask;
 			long opbDir = inst & opbDirMask;
+			opbDir >>=  16;
+			opaDir >>=  36;
 			OpA = memory[opaDir];
-			OpB = memory[opaDir];
+			OpB = memory[opbDir];
 		}
 		else if(opCode == ALUOpCode){
 			cout<<"Soy una ALU \n";
 			OpCodeAlu = inst >> OpCodeAluMask;
 			long opaDir = inst & opaDirMask;
 			long opbDir = inst & opbDirMask;
+			opbDir >>=  16;
+			opaDir >>=  36;
 			OpA = memory[opaDir];
-			OpB = memory[opaDir];
+			OpB = memory[opbDir];
 		}
 	}
 }

@@ -125,7 +125,7 @@ int sc_main(int argc, char* argv[])
 	sc_trace(wf, clk, "Clock");
 	sc_trace(wf, flag_en_DFT, "DFT_Enable");
 	sc_trace(wf, flag_en_IDFT, "IDFT_Enable");
-	sc_trace(wf, InRealBus, "InputData");
+	sc_trace(wf, InRealBus, "InputDataFT");
 	sc_trace(wf, outRealBus_DFT, "OutputData_DFT");
 	sc_trace(wf, outRealBus_IDFT, "OutputData_IDFT");
 	sc_trace(wf, rxIDFT, "rxIDFT");
@@ -141,34 +141,59 @@ int sc_main(int argc, char* argv[])
 	sc_trace(wf, Underflow, "Underflow");
 
 	sc_start(1, SC_NS);
-	inst = 0x4000000000100005;
+	inst = 0x1000000000000005;
+	for (int i=0;i<17;i++) {
+	    clk = 0; 
+	    sc_start(1,SC_NS);
+	    clk = 1; 
+	    sc_start(1,SC_NS);
+	    inst = 0xFFFFFFFFFFFFFFFF;
+	}
+	inst = 0x2000000000000005;
+	for (int i=0;i<17;i++) {
+	    clk = 0; 
+	    sc_start(1,SC_NS);
+	    clk = 1; 
+	    sc_start(1,SC_NS);
+	    inst = 0xFFFFFFFFFFFFFFFF;
+	}
+	//Suma de FPU
+	inst = 0x300000A0000B00FF;
 	for (int i=0;i<5;i++) {
 	    clk = 0; 
 	    sc_start(1,SC_NS);
 	    clk = 1; 
 	    sc_start(1,SC_NS);
 	}
-	inst = 0x3100000000200000;
+	//Suma de FPU
+	inst = 0x310000C0000D00FF;
 	for (int i=0;i<5;i++) {
 	    clk = 0; 
 	    sc_start(1,SC_NS);
 	    clk = 1; 
 	    sc_start(1,SC_NS);
 	}
-	inst = 0x2000000000200005;
-	for (int i=0;i<10;i++) {
+	inst = 0x400000F0001000FF;
+	for (int i=0;i<5;i++) {
 	    clk = 0; 
 	    sc_start(1,SC_NS);
 	    clk = 1; 
 	    sc_start(1,SC_NS);
 	}
-	inst = 0x1000000000200005;
-	for (int i=0;i<30;i++) {
+	inst = 0x440000F0001000FF;
+	for (int i=0;i<5;i++) {
 	    clk = 0; 
 	    sc_start(1,SC_NS);
 	    clk = 1; 
 	    sc_start(1,SC_NS);
 	}
+	// inst = 0x1000000000200005;
+	// for (int i=0;i<30;i++) {
+	//     clk = 0; 
+	//     sc_start(1,SC_NS);
+	//     clk = 1; 
+	//     sc_start(1,SC_NS);
+	// }
 
 	std::cout << "Hellow World, SystemC" << std::endl;
 	

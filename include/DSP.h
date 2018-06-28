@@ -71,7 +71,7 @@ SC_MODULE(DSP)
 	sc_uint<MemoryLogSize> usedMemorySoFar;
 
 	//Data Memory of the DSP
-	int memory[MemorySize];
+	double memory[MemorySize];
 
 
 	//State Machine variables

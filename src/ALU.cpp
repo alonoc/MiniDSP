@@ -27,11 +27,11 @@ void ALU::operate()
                 break;
                 
             case 4:
-                result = data1 && data2;
+                result = data1 & data2;
                 break;
                 
             case 5:
-                result = data1 || data2;
+                result = data1 | data2;
                 break;
                 
                             
